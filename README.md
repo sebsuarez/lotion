@@ -1,81 +1,78 @@
-# Lotion
-In this assignment, you will create a Notion-like application named Lotion with HTML, CSS, and React.
+# Lotion 📝
+
+Lotion is a Notion-inspired note-taking web app built with React. Users can create, edit, view, and delete rich-text notes, with all data saved locally in the browser, so notes persist across sessions without a backend or database.
 
 ---
 
-## :foot: Steps
-- Clone the repo
-- Make sure you're inside the root directory of the repo and then run `npm install` to install all the necessary packages
-- Run `npm start` and you should be able to see the page open up on your default browser
-- Make sure to see the demo video on D2L
-- Make your changes and push to the `main` branch before the deadline to be graded
-- Create a new repo under your username and add it as a new remote to the project: `git remote add personal <github-address>`
-- Push your changes to your personal repo as well: `git push personal main`
-- Use [Netlify](https://www.netlify.com/) to deploy your application and drop the link to your website in the [NETLIFY-ADDRESS](./NETLIFY-ADDRESS.md) file
+## ✨ Features
+
+- **Create notes** instantly from the sidebar, each with a title, a date and time, and rich-text content
+- **Rich-text editing** with formatting tools (bold, italics, lists, headings, and more) powered by React Quill
+- **View and edit modes**, so notes open read-only and switch to an editor only when you choose to edit
+- **Delete with confirmation**, preventing accidental loss of notes
+- **Persistent storage**: notes are saved to `localStorage` and survive page refreshes and browser restarts
+- **Collapsible sidebar** listing all notes with a title, date, and content preview for quick navigation
+- **Readable timestamps**: raw `datetime-local` values are formatted into readable dates (e.g., "October 27, 2026, 2:30 PM")
+- [**Searchable tags** with suggestions for existing tags as you type]
+- [**Search and sorting** to quickly find notes]
 
 ---
 
-## :page_with_curl: Notes
-- Three external libraries were used for the demo:
-    - `react-router-dom` for front-end routing, which you can install by running `npm install react-router-dom`. Read more [here](https://masoudkarimif.github.io/posts/react-101/#react-router)
-    - `react-quill` for the editor, which you can install by running `npm install react-quill`. Read more [here](https://github.com/zenoamaro/react-quill)
-    - `uuid` for generating universally unique identifiers, which you can install by running `npm install uuid`. Read more [here](https://www.npmjs.com/package/uuid). Based on the algorithm you choose to implement the application, you may not need this library
-- There's no backend or database for the application. However, the data persists in the browser. You need to use `localStorage` to implement this. Read more [here](https://masoudkarimif.github.io/posts/javascript-101/#localstorage) on how to use it
-- Three different React hooks were used to build the demo:
-    - [`useState`](https://masoudkarimif.github.io/posts/react-101/#usestate)
-    - [`useEffect`](https://masoudkarimif.github.io/posts/react-101/#useeffect)
-    - [`useRef`](https://masoudkarimif.github.io/posts/react-101/#useref). Based on your solution, you may not need to use this hook
-- The demo uses a Layout route. Read more [here](https://masoudkarimif.github.io/posts/react-101/#the-layout-route)
-- You need to use a page parameter to pass the note id to the component: `/notes/1`, `/notes/2/edit`. Read more [here](https://masoudkarimif.github.io/posts/react-101/#page-parameters)
-- Based on your solution, you probably need to pass props to the child/children of the Layout component. Read more [here](https://masoudkarimif.github.io/posts/react-101/#passing-props-to-outlet)
-- You need to use the `useParams` and `useOutletContext` hooks from the `react-router-dom` library to access the page parameters and the data passed to the children of the Layout component. Read more [here](https://masoudkarimif.github.io/posts/react-101/#page-parameters) and [here](https://masoudkarimif.github.io/posts/react-101/#passing-props-to-outlet)
-- You probably need to use the `useNavigate` hook from the `react-router-dom` library to navigate to a different page at times. (hint: when you edit a note and hit save, you navigate from the edit path `/notes/note-id/edit` to the view path `/notes/note-id`). Read more [here](https://masoudkarimif.github.io/posts/react-101/#usenavigate)
-- The prompt you get when click on the Delete button is implemented using the `window.confirm` method. It returns `true` if the user confirms, and `false` if they don't:
+## 🏗️ How It Works
 
-    ```js
-    const answer = window.confirm("Are you sure?");
-    if (answer) {
-      deleteNote(noteId);
-    }
-    ```
-- The page icon (the L letter) is already included in the project
-- The demo was built using Flexbox, but feel free to use a CSS framework
-- The menu icon is the HTML unicode character `&#9776;`
-- The datetime picker shown in the demo is the `<input type="datetime-local" />` HTML element
-- The value you get from the `datetime-local` element is not formatted the way it's shown in the demo. In order to format it, you can use a function like this:
+### Routing
+Lotion uses **React Router** for client-side routing, so each note has its own URL:
 
-    ```js
-    const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-    };
+| Route | Purpose |
+|---|---|
+| `/notes` | Default view, with all notes in the sidebar |
+| `/notes/:id` | View a single note (read-only) |
+| `/notes/:id/edit` | Edit a note's title, date, and content |
 
-    const formatDate = (when) => {
-        const formatted = new Date(when).toLocaleString("en-US", options);
-        if (formatted === "Invalid Date") {
-            return "";
-        }
-        return formatted;
-    };
-    ```
+A shared **layout route** renders the header and sidebar once, while the main panel swaps between view and edit pages using React Router's `<Outlet />`. Note data and update functions are passed to child routes through `useOutletContext`, and `useParams` reads the note ID from the URL to load the right note.
 
-## Things you may change
-- You may use a CSS framework or a different CSS method other than Flexbox. The final result needs to look like the demo
-- You may change the colors, font family, and font size
-- You may use a different library for the editor. The demo uses the `react-quill` library
-- You may use a different library for the routing. The demo uses the `react-router-dom` library
-- You may use a different library for generating ids. The demo uses the `uuid` library. You may also choose not to use a library for this based on your solution. If your solution doesn't need a UUID, it doesn't mean it's wrong
+When a user saves an edit, `useNavigate` redirects them from `/notes/:id/edit` back to `/notes/:id`, so the app moves naturally between editing and reading.
 
-## Things you may not change (points will be deducted if you do)
-- The general layout including all the buttons
-- The routing. The application needs to use front-end routing to show or edit a note
-- The `localStorage`. The application needs to use the browser storage to persist the data
-- The editor. There needs to be a text editor to write a note
-- The deployment. The application needs to be deployed on Netlify the way we saw in the class
+### State Management
+The app's state lives in React using **`useState`** for the list of notes and the current UI state. **`useEffect`** syncs that state with `localStorage`: notes load on startup and save automatically whenever they change. Each note gets a unique ID generated with the **`uuid`** library, which keeps routing and updates reliable.
 
-## Bonous points
-- Tags. They need to be searchable. That is, when a user is picking a tag for a note, the application should suggest similar tags
-- Sorting and searching for the notes
+### Data Persistence
+Instead of a backend, Lotion stores everything in the browser's **`localStorage`** as JSON. This keeps the app fast and lightweight, and means it works entirely offline after loading.
+
+### Layout & Styling
+The interface is built with **CSS Flexbox**, using a fixed header, a collapsible sidebar, and a main content area, closely following Notion's clean design.
+
+---
+
+## 🛠️ Tech Stack
+
+- **React** (hooks: `useState`, `useEffect`, `useRef`)
+- **React Router** (`useParams`, `useNavigate`, `useOutletContext`, layout routes)
+- **React Quill** for the rich-text editor
+- **uuid** for unique note IDs
+- **localStorage** for client-side persistence
+- **HTML, CSS (Flexbox)**
+- **Netlify** for deployment
+
+---
+
+## 🚀 Running Locally
+
+```bash
+git clone https://github.com/sebsuarez/notion-clone.git
+cd lotion
+npm install
+npm start
+```
+
+The app will open at `http://localhost:3000`.
+
+---
+
+## 💡 What I Learned
+
+- Structuring a multi-page React app with nested and layout routes
+- Sharing state across routes without prop drilling using `useOutletContext`
+- Persisting and syncing app state with browser storage
+- Integrating a third-party rich-text editor into a React component tree
+- Deploying a single-page application to Netlify
